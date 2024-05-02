@@ -1,31 +1,33 @@
 import numpy as np
 import fenc as fe
+import cifar_loader as cl
+from threading import Thread
 
 # Creating data set
  
 # A
-a =[0, 0, 1, 1, 0, 0,
-   0, 1, 0, 0, 1, 0,
-   1, 1, 1, 1, 1, 1,
-   1, 0, 0, 0, 0, 1,
-   1, 0, 0, 0, 0, 1]
-# B
-b =[0, 1, 1, 1, 1, 0,
-   0, 1, 0, 0, 1, 0,
-   0, 1, 1, 1, 1, 0,
-   0, 1, 0, 0, 1, 0,
-   0, 1, 1, 1, 1, 0]
-# C
-c =[0, 1, 1, 1, 1, 0,
-   0, 1, 0, 0, 0, 0,
-   0, 1, 0, 0, 0, 0,
-   0, 1, 0, 0, 0, 0,
-   0, 1, 1, 1, 1, 0]
+# a =[0, 0, 1, 1, 0, 0,
+#    0, 1, 0, 0, 1, 0,
+#    1, 1, 1, 1, 1, 1,
+#    1, 0, 0, 0, 0, 1,
+#    1, 0, 0, 0, 0, 1]
+# # B
+# b =[0, 1, 1, 1, 1, 0,
+#    0, 1, 0, 0, 1, 0,
+#    0, 1, 1, 1, 1, 0,
+#    0, 1, 0, 0, 1, 0,
+#    0, 1, 1, 1, 1, 0]
+# # C
+# c =[0, 1, 1, 1, 1, 0,
+#    0, 1, 0, 0, 0, 0,
+#    0, 1, 0, 0, 0, 0,
+#    0, 1, 0, 0, 0, 0,
+#    0, 1, 1, 1, 1, 0]
  
-# Creating labels
-y =[[1, 0, 0],
-   [0, 1, 0],
-   [0, 0, 1]]
+# # Creating labels
+# y =[[1, 0, 0],
+#    [0, 1, 0],
+#    [0, 0, 1]]
 
 
 
@@ -37,16 +39,48 @@ so that we can directly feed it to the neural network,
 these vectors are then stored in a list x.
 """
  
-x =[np.array(a).reshape(1, 30), np.array(b).reshape(1, 30), 
-                                np.array(c).reshape(1, 30)]
+
+
+# x =[np.array(a).reshape(1, 30), np.array(b).reshape(1, 30), 
+                                # np.array(c).reshape(1, 30)]
+IMG_COLOR = 3
+IMG_WIDTH = 32
+IMG_HEIGHT = 32
+IMG_SZ = IMG_HEIGHT * IMG_WIDTH * IMG_COLOR
+LAYER_1 = 100
+LABEL_CNT = 10
+
+x_init, y = cl.load_data()
+
+x = [i.reshape(1, IMG_SZ) for i in x_init]
+x = x[:50]
+
+print(x[0].shape)
+
+
 enc_x_feip = []
 feip = fe.FEIP()
 feip.setup(x[1].shape[1])
+threads = []
 
+def add_enc_image(image, lst):
+
+   enc_image = feip.encrypt(image)
+   lst.append(enc_image)
+
+k = 0
 for image in x:
    # print("image", image.tolist(), type(image.tolist()))
-   enc_x_feip.append(feip.encrypt(image.tolist()[0]))
+   print(k)
+   k += 1
+      
+   t = Thread(target=add_enc_image, args=[image.tolist()[0], enc_x_feip])
+   threads.append(t)
 
+   t.start()
+
+for t in threads:
+   t.join()
 
 # enc_x_febo
 
@@ -54,7 +88,7 @@ for image in x:
 y = np.array(y)
  
  
-print(x, "\n\n", y)
+# print(x, "\n\n", y)
 
 
 
@@ -71,10 +105,10 @@ def sigmoid(x):
  
 def f_forward(x, w1, w2):
     # hidden
-
     # z1 = x.dot(w1)# input from layer 1 
     # print("z1", z1, type(z1))
     z1 = first_layer_prep(x, w1)
+    print("first layer done")
     # print("z1", z1, type(z1))
     # print("z is ", z1)
     a1 = sigmoid(z1)# out put of layer 2 
@@ -122,7 +156,7 @@ def first_layer_prep(x, w1):
    for i in range(w1.shape[1]):
       z.append(secure_inner_product(x, w1[ :, i].tolist()))
 
-   return np.array(z).reshape(1, 5)
+   return np.array(z).reshape(1, LAYER_1)
 
 # initializing the weights randomly
 def generate_wt(x, y):
@@ -193,7 +227,7 @@ def predict(x, w1, w2):
     else:
         print("Image is of letter C.")
     plt.imshow(x.reshape(5, 6))
-    plt.show()    
+    plt.show()   
    
   
 
@@ -206,9 +240,9 @@ trained weights w1, w2"""
 
 
 
-w1 = generate_wt(30, 5)
-w2 = generate_wt(5, 3)
-print(w1, "\n\n", w2)
+w1 = generate_wt(IMG_SZ, LAYER_1)
+w2 = generate_wt(LAYER_1, LABEL_CNT)
+# print(w1, "\n\n", w2)
 
 
 acc, losss, w1, w2 = train(x, y, w1, w2, 0.1, 100)
@@ -242,4 +276,4 @@ The predict function will take the following arguments:
 3) w2 trained weights
 """
 # print("x1", x[1], type(x[1]))
-predict(x[1], w1, w2)
+# predict(x[1], w1, w2)

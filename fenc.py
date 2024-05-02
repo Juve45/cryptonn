@@ -144,10 +144,10 @@ class FEIP:
 	def key_derive(self, y):
 
 		s = self.msk['s']
-		print("s", s, range(len(s) - 1))
+		# print("s", s, range(len(s) - 1))
 		ans = s[-1] * y[-1]
 
-		print("ans", ans, flush=True)
+		# print("ans", ans, flush=True)
 		for i in range(len(s) - 1):
 			ans += s[i] * y[i]
 
@@ -176,7 +176,7 @@ class FEIP:
 			prod *= cti[i] ** y[i]
 		prod /= ct0 ** skf
 
-		return discrete_log_bf(self.group, g, prod)
+		return discrete_log(self.group, g, prod)
 
 
 a = FEIP()

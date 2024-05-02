@@ -1,11 +1,11 @@
 from charm.toolbox.pairinggroup import PairingGroup,ZR,G1,G2,GT,pair
+from charm.toolbox.integergroup import IntegerGroup
 import numpy as np
 # trials = 10
 # group = PairingGroup("SS1024")
 # g = group.random(G1)
 # h = group.random(G1)
 # i = group.random(G2)
-
 
 
 
@@ -133,6 +133,7 @@ class FEIP:
 	def setup(self, n):
 
 		self.group = PairingGroup("MNT224")
+
 		s = [self.group.random(ZR) for i in range(n)]
 		g = self.group.random(G1)
 		h = [g ** i for i in s]

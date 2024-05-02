@@ -2,7 +2,7 @@ import numpy as np
 import fenc as fe
 import cifar_loader as cl
 from threading import Thread
-
+import time
 # Creating data set
  
 # A
@@ -43,17 +43,30 @@ these vectors are then stored in a list x.
 
 # x =[np.array(a).reshape(1, 30), np.array(b).reshape(1, 30), 
                                 # np.array(c).reshape(1, 30)]
+
+
+
+
 IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
-IMG_SZ = IMG_HEIGHT * IMG_WIDTH * IMG_COLOR
-LAYER_1 = 100
+IMG_SZ = IMG_HEIGHT * IMG_WIDTH
+LAYER_1 = 20
 LABEL_CNT = 10
 
 x_init, y = cl.load_data()
 
-x = [i.reshape(1, IMG_SZ) for i in x_init]
-x = x[:50]
+
+def grayscale(pixels):
+
+   ans = []
+   for i in range(IMG_SZ):
+      ans.append(int(0.299*pixels[i] + 0.587*pixels[i + 1024] + 0.114*pixels[i + 2048]))
+   # print(ans)
+   return np.array(ans)
+
+
+x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:50]]
 
 print(x[0].shape)
 
@@ -68,6 +81,9 @@ def add_enc_image(image, lst):
    enc_image = feip.encrypt(image)
    lst.append(enc_image)
 
+
+start = time.time()
+
 k = 0
 for image in x:
    print(k)
@@ -80,6 +96,11 @@ for image in x:
 
 for t in threads:
    t.join()
+
+end_time = time.time()
+
+print(end_time - start, "s")
+
 
 # enc_x_febo
 
@@ -106,8 +127,11 @@ def f_forward(x, w1, w2):
     # hidden
     # z1 = x.dot(w1)# input from layer 1 
     # print("z1", z1, type(z1))
+    print("first layer start")
+    start = time.time()
     z1 = first_layer_prep(x, w1)
-    print("first layer done")
+    end = time.time()
+    print("first layer done, time: ", end - start, "s")
     # print("z1", z1, type(z1))
     # print("z is ", z1)
     a1 = sigmoid(z1)# out put of layer 2 
@@ -138,7 +162,6 @@ def normalize_w(w, k):
 def secure_inner_product(x, y):
 
    y = normalize_w(y, 10 ** 2)
-   # print("type", type(y), y)
 
    skf = feip.key_derive(y)
 

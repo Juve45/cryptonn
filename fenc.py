@@ -85,16 +85,6 @@ class FEBO:
 		
 
 
-obj = FEBO()
-obj.setup()
-enc = obj.encrypt(10)
-key = obj.key_derive(enc['cmt'], '-', 4)
-dec = obj.decrypt(key, enc['ct'], '-', 4)
-# print(dec)
-
-# print(obj.mpk['g'] ** 6)
-
-
 
 def discrete_log_bf(group, g, ge):
 	for i in range(1500):
@@ -107,7 +97,7 @@ def discrete_log_bf(group, g, ge):
 	raise Exception('logarithm exponent is too big')
 
 def discrete_log(group, a, b):
-	order = 10 ** 6
+	order = 2 * 10 ** 9
 	m = int(np.sqrt(order)) + 1
 	baby_steps = {}
 
@@ -136,10 +126,7 @@ def discrete_log(group, a, b):
 	raise Exception('logarithm exponent is too big')
 	
 
-group = PairingGroup("MNT224")
-g = group.random(G1)
-ge = 1 / g ** 9
-print("result", discrete_log(group, g, ge))
+
 
 class FEIP:
 
@@ -195,12 +182,5 @@ class FEIP:
 		return discrete_log(self.group, g, prod)
 
 
-a = FEIP()
-
-a.setup(3)
-ct = a.encrypt([1, 2, 3])
-skf = a.key_derive([2, 2, 1])
-r = a.decrypt(ct, skf, [2, 2, 1])
-print(r)
 
 	

@@ -9,8 +9,6 @@ def unpickle(file):
     return dict
 
 
-
-
 def load_data():
 
 	d = unpickle('cifar10/data_batch_1')

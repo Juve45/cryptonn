@@ -112,7 +112,7 @@ def discrete_log(group, a, b):
 	baby_steps = {}
 
 	for i in range(m + 1):
-		baby_steps[g ** i] = i 
+		baby_steps[a ** i] = i 
 
 	am = 1 / (a ** m)
 	giant_step = b
@@ -122,11 +122,23 @@ def discrete_log(group, a, b):
 			result = bs + i * m
 			return result
 		giant_step = giant_step * am
+
+	am = a ** m
+	giant_step = b
+	for i in range (m + 1):
+		if giant_step in baby_steps:
+			bs = baby_steps[giant_step]
+			result = bs - i * m
+			return result
+		giant_step = giant_step * am
+
+
+	raise Exception('logarithm exponent is too big')
 	
 
 group = PairingGroup("MNT224")
 g = group.random(G1)
-ge = g ** 10009
+ge = 1 / g ** 9
 print("result", discrete_log(group, g, ge))
 
 class FEIP:
@@ -175,6 +187,10 @@ class FEIP:
 				y[i] += self.group.order()
 			prod *= cti[i] ** y[i]
 		prod /= ct0 ** skf
+
+		print(g)
+		print(g ** 9)
+		print(discrete_log(self.group, g, g ** 9))
 
 		return discrete_log(self.group, g, prod)
 

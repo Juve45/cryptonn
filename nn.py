@@ -70,7 +70,6 @@ def add_enc_image(image, lst):
 
 k = 0
 for image in x:
-   # print("image", image.tolist(), type(image.tolist()))
    print(k)
    k += 1
       

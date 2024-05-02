@@ -1,5 +1,5 @@
 from charm.toolbox.pairinggroup import PairingGroup,ZR,G1,G2,GT,pair
-
+import numpy as np
 # trials = 10
 # group = PairingGroup("SS1024")
 # g = group.random(G1)
@@ -106,9 +106,28 @@ def discrete_log_bf(group, g, ge):
 
 	raise Exception('logarithm exponent is too big')
 
+def discrete_log(group, a, b):
+	order = 10 ** 6
+	m = int(np.sqrt(order)) + 1
+	baby_steps = {}
 
+	for i in range(m + 1):
+		baby_steps[g ** i] = i 
 
+	am = 1 / (a ** m)
+	giant_step = b
+	for i in range (m + 1):
+		if giant_step in baby_steps:
+			bs = baby_steps[giant_step]
+			result = bs + i * m
+			return result
+		giant_step = giant_step * am
+	
 
+group = PairingGroup("MNT224")
+g = group.random(G1)
+ge = g ** 10009
+print("result", discrete_log(group, g, ge))
 
 class FEIP:
 

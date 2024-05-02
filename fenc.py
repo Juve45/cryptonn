@@ -175,10 +175,6 @@ class FEIP:
 			prod *= cti[i] ** y[i]
 		prod /= ct0 ** skf
 
-		print(g)
-		print(g ** 9)
-		print(discrete_log(self.group, g, g ** 9))
-
 		return discrete_log(self.group, g, prod)
 
 

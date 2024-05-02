@@ -90,9 +90,9 @@ obj.setup()
 enc = obj.encrypt(10)
 key = obj.key_derive(enc['cmt'], '-', 4)
 dec = obj.decrypt(key, enc['ct'], '-', 4)
-print(dec)
+# print(dec)
 
-print(obj.mpk['g'] ** 6)
+# print(obj.mpk['g'] ** 6)
 
 
 
@@ -147,7 +147,7 @@ class FEIP:
 
 	def decrypt(self, ct, skf, y):
 		g = self.mpk['g']
-		print("y", y)
+		# print("y", y)
 		ct0 = ct['ct0']
 		cti = ct['cti']
 		prod = 1 # ct[0] ** y[0] / (ct0)

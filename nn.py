@@ -4,7 +4,7 @@ import cifar_loader as cl
 from threading import Thread
 import time
 from memory_profiler import profile 
- 
+import sys
 # x =[np.array(a).reshape(1, 30), np.array(b).reshape(1, 30), 
                                           # np.array(c).reshape(1, 30)]
 
@@ -12,7 +12,7 @@ from memory_profiler import profile
 IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
-IMG_SZ = IMG_HEIGHT * IMG_WIDTH
+IMG_SZ = IMG_HEIGHT * IMG_WIDTH 
 LAYER_1 = 20
 LABEL_CNT = 10
 
@@ -30,7 +30,9 @@ def grayscale(pixels):
     return np.array(ans)
 
 
-x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:70]]
+x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:20]]
+
+# print("x=", x[0].tolist())
 
 print(x[0].shape)
 
@@ -91,11 +93,16 @@ def sigmoid(x):
 def f_forward(x, w1, w2):
     # hidden
 
-    print("first layer start")
+    print("first layer start", file=sys.stderr)
     start = time.time()
     z1 = first_layer_prep(x, w1)
     end = time.time()
-    print("first layer done, time: ", end - start, "s")
+    # print(x)
+    # printsys.err.
+    print("first layer done, time: ", end - start, "s", file=sys.stderr)
+    # print("w=", w1.tolist())
+    # print("a=", z1.tolist())
+    # print("first layer done, time: ", end - start, "s", file=sys.stderr)
 
     a1 = sigmoid(z1)# out put of layer 2 
 

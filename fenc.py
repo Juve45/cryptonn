@@ -1,6 +1,8 @@
 from charm.toolbox.pairinggroup import PairingGroup,ZR,G1,G2,GT,pair
 from charm.toolbox.integergroup import IntegerGroup
 import numpy as np
+from memory_profiler import profile 
+
 # trials = 10
 # group = PairingGroup("SS1024")
 # g = group.random(G1)
@@ -96,50 +98,58 @@ def discrete_log_bf(group, g, ge):
 
 	raise Exception('logarithm exponent is too big')
 
-def discrete_log(group, a, b):
-	order = 2 * 10 ** 9
-	m = int(np.sqrt(order)) + 1
-	baby_steps = {}
-
-	for i in range(m + 1):
-		baby_steps[a ** i] = i 
-
-	am = 1 / (a ** m)
-	giant_step = b
-	for i in range (m + 1):
-		if giant_step in baby_steps:
-			bs = baby_steps[giant_step]
-			result = bs + i * m
-			return result
-		giant_step = giant_step * am
-
-	am = a ** m
-	giant_step = b
-	for i in range (m + 1):
-		if giant_step in baby_steps:
-			bs = baby_steps[giant_step]
-			result = bs - i * m
-			return result
-		giant_step = giant_step * am
-
-
-	raise Exception('logarithm exponent is too big')
 	
 
 
 
 class FEIP:
 
+	def precalc_log(self):
+		order = 10 ** 7
+		self.m = int(np.sqrt(order)) + 1
+		self.baby_steps = {}
+
+		ai = self.g ** 0
+		for i in range(self.m + 1):
+			self.baby_steps[ai] = i
+			ai *= self.g 
+
+
+	# @profile
+	def discrete_log(self, b):
+		#todo precalc discretelog 
+		
+		am = self.g ** self.m
+		giant_step = b
+		giant_step_2 = b
+		for i in range (self.m + 1):
+			if giant_step in self.baby_steps:
+				bs = self.baby_steps[giant_step]
+				result = bs + i * self.m
+				return result
+			giant_step = giant_step / am
+			if giant_step_2 in self.baby_steps:
+				bs = self.baby_steps[giant_step_2]
+				result = bs - i * self.m
+				return result
+			giant_step_2 = giant_step_2 * am
+
+
+		raise Exception('logarithm exponent is too big')
+
+
+
 	def setup(self, n):
 
 		self.group = PairingGroup("MNT224")
 
 		s = [self.group.random(ZR) for i in range(n)]
-		g = self.group.random(G1)
-		h = [g ** i for i in s]
+		self.g = self.group.random(G1)
+		h = [self.g ** i for i in s]
+		self.precalc_log()
 
 		self.msk = {"s" : s}
-		self.mpk = {"g" : g, "h" : h}
+		self.mpk = {"g" : self.g, "h" : h}
 
 	def key_derive(self, y):
 
@@ -176,7 +186,7 @@ class FEIP:
 			prod *= cti[i] ** y[i]
 		prod /= ct0 ** skf
 
-		return discrete_log(self.group, g, prod)
+		return self.discrete_log(prod)
 
 
 

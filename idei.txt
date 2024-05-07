@@ -1,0 +1,7 @@
+
+
+
+
+-- Dupa ce calculam A = X*w sa adaugam niste numere relativ mici la A. A = X*w + b. Astfel, ecuatiile nu mai sunt exact, deruteaza solverul, dar reteaua neuronala ar trebui sa mearga cam la fel 
+
+-- sa facem o schema de functional encryption care decripteaza abia dupa ce se calculeaza rezultatul de la sigmoid function. 

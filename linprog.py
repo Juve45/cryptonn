@@ -20,12 +20,12 @@ import numpy as np
 import attack
 
 
-def augment(w, a, n):
-	print(len(w[0]))
+def augment(w, a, n, t): #t is threshold
+	# print(len(w[0]))
 
 	for i in range(32):
 		for j in range(32):
-			if i % 4 == 0 and j % 4 == 0:
+			if i % 2 == 0 and j % 2 == 0 :
 				row = [0] * n
 				row[i * 32 + j] = 1
 				pos = []
@@ -34,13 +34,19 @@ def augment(w, a, n):
 					jj = j + y
 					if 0 <= ii * 32 + jj < n:
 						pos.append(ii * 32 + jj) 
-
 				for p in pos:
 					row[p] = -1. / len(pos)
 				# print(row)
 				print(len(row))
 				w.append(row)
-				a.append(0.)
+				a.append(t)
+
+				row = [0] * n
+				row[i * 32 + j] = -1
+				for p in pos:
+					row[p] = 1. / len(pos)
+				w.append(row)
+				a.append(t)
 	print(a)
 
 
@@ -59,7 +65,9 @@ lb = [0] * len(x)
 ub = [256] * len(x)
 
 w = w.transpose().tolist()
-augment(w, a, len(x))
+ineq = []
+aineq = []
+augment(ineq, aineq, len(x), 3.)
 
 
 import scipy.optimize
@@ -71,7 +79,9 @@ print(len(x))
 # print(a.shape)
 
 # x = np.linalg.lstsq(w, a)[0]
-x = scipy.optimize.linprog(c, A_eq = w, b_eq = a, bounds=[0, 255] )
+x = scipy.optimize.linprog(c, A_ub = ineq, b_ub = aineq, A_eq = w, b_eq = a, bounds=[0, 255] )
+print(len(a))
+# x = scipy.optimize.linprog(c, A_eq = w, b_eq = a, bounds=[0, 255] )
 print(x)
 
 attack.show_image(x['x'])

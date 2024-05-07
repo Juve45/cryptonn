@@ -9,9 +9,9 @@ def unpickle(file):
     return dict
 
 
-def load_data():
+def load_data(file):
 
-	d = unpickle('cifar10/data_batch_1')
+	d = unpickle(file)
 
 	y = []
 	for i in d[b'labels']:
@@ -24,5 +24,5 @@ def load_data():
 
 	return x, y
 
-load_data()
+# load_data()
 

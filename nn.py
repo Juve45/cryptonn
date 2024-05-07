@@ -163,7 +163,10 @@ def loss(out, Y):
 	 
 # Back propagation of error 
 def back_prop(x, y, w1, w2, alpha):
-		
+
+
+# retrieve the intermediate values
+    
 	  # hidden layer
 	  z1 = x.dot(w1)# input from layer 1 
 	  z1 = z1 + offset
@@ -173,9 +176,8 @@ def back_prop(x, y, w1, w2, alpha):
 	  z2 = a1.dot(w2)# input of out layer
 	  a2 = sigmoid(z2)# output of out layer
 
-
 	  # error in output layer
-	  d2 = a2 - y
+	  d2 = a2 - y #verif
 	  d1 = np.multiply((w2.dot((d2.transpose()))).transpose(), 
 															 (np.multiply(a1, 1-a1)))
  
@@ -184,8 +186,8 @@ def back_prop(x, y, w1, w2, alpha):
 	  w2_adj = a1.transpose().dot(d2)
 		
 	  # Updating parameters
-	  w1 = w1 - (alpha * w1_adj)
-	  w2 = w2 - (alpha * w2_adj)
+	  w1 = w1 - (alpha * w1_adj) # update weight using gradient
+	  w2 = w2 - (alpha * w2_adj) 
 		
 	  a1 = None
 	  a2 = None
@@ -216,7 +218,6 @@ def train(x, Y, w1, w2, alpha = 0.01, epoch = 10):
 		acc.append((acc_1/len(x))*100)
 		losss.append(loss_1/len(x))
 	return(acc, losss, w1, w2)
-
 
  
 def test(x, Y, w1, w2):

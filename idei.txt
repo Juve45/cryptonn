@@ -1,6 +1,6 @@
 
 
-
+-- de schimbat reteaua cu asta de aici: https://medium.com/@waleedmousa975/building-a-neural-network-from-scratch-using-numpy-and-math-libraries-a-step-by-step-tutorial-in-608090c20466
 
 -- Dupa ce calculam A = X*w sa adaugam niste numere relativ mici la A. A = X*w + b. Astfel, ecuatiile nu mai sunt exact, deruteaza solverul, dar reteaua neuronala ar trebui sa mearga cam la fel 
 

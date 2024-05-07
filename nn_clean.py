@@ -13,7 +13,7 @@ IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
 IMG_SZ = IMG_HEIGHT * IMG_WIDTH 
-LAYER_1 = 900
+LAYER_1 = 500
 LABEL_CNT = 10
 
 x_init, y = cl.load_data()

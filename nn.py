@@ -12,7 +12,7 @@ IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
 IMG_SZ = IMG_HEIGHT * IMG_WIDTH 
-LAYER_1 = 1000
+LAYER_1 = 2000
 LABEL_CNT = 10
 
 ENCRYPTION = False
@@ -87,8 +87,8 @@ def f_forward(x, w1, w2):
 		z1 = x.dot(w1)
 	
 	global offset
-	offset = np.random.randint(low = -100002, high = 100002, size=z1.shape)
-	z1 = z1 + offset
+	offset = np.random.randint(low = -10, high = 10, size=z1.shape)
+	z1 = z1 +offset
 
 	a1 = sigmoid(z1)# out put of layer 2 
 
@@ -154,7 +154,12 @@ def generate_wt(x, y):
 def loss(out, Y):
 	s =(np.square(out-Y))
 	s = np.sum(s)/len(y)
-	return(s)
+	pos1 = np.argmax(out)
+	pos2 = np.argmax(Y)
+	outcome = 0
+	if pos1 == pos2:
+		outcome = 1
+	return (s, outcome)
 	 
 # Back propagation of error 
 def back_prop(x, y, w1, w2, alpha):
@@ -170,7 +175,7 @@ def back_prop(x, y, w1, w2, alpha):
 
 
 	  # error in output layer
-	  d2 =(a2-y)
+	  d2 = a2 - y
 	  d1 = np.multiply((w2.dot((d2.transpose()))).transpose(), 
 															 (np.multiply(a1, 1-a1)))
  
@@ -179,8 +184,8 @@ def back_prop(x, y, w1, w2, alpha):
 	  w2_adj = a1.transpose().dot(d2)
 		
 	  # Updating parameters
-	  w1 = w1-(alpha*(w1_adj))
-	  w2 = w2-(alpha*(w2_adj))
+	  w1 = w1 - (alpha * w1_adj)
+	  w2 = w2 - (alpha * w2_adj)
 		
 	  a1 = None
 	  a2 = None
@@ -195,17 +200,21 @@ def train(x, Y, w1, w2, alpha = 0.01, epoch = 10):
 
 	for j in range(epoch):
 		l =[]
+		acc_1 = 0
+		loss_1 = 0
 		for i in range(len(x)):
 			image = x[i]
 			if ENCRYPTION:
 				image = enc_x_feip[i]
 			out = f_forward(image, w1, w2)
-			l.append((loss(out, Y[i])))
+			lo = loss(out, Y[i])
+			acc_1 += lo[1]
+			loss_1 += lo[0]
 			w1, w2 = back_prop(x[i], y[i], w1, w2, alpha)
 
-		print("epochs:", j + 1, "======== acc:", (1-(sum(l)/len(x)))*100)   
-		acc.append((1-(sum(l)/len(x)))*100)
-		losss.append(sum(l)/len(x))
+		print("epochs:", j + 1, "======== acc:", acc_1)   
+		acc.append((acc_1/len(x))*100)
+		losss.append(loss_1/len(x))
 	return(acc, losss, w1, w2)
 
 
@@ -262,7 +271,7 @@ w2 = generate_wt(LAYER_1, LABEL_CNT)
 x, y, enc_x_feip = load_data('cifar10/data_batch_1', 500)
 
 
-acc, losss, w1, w2 = train(x, y, w1, w2, 0.1, 15)
+acc, losss, w1, w2 = train(x, y, w1, w2, 0.08, 300)
 
 import matplotlib.pyplot as plt1
  

@@ -16,7 +16,7 @@ IMG_SZ = IMG_HEIGHT * IMG_WIDTH
 LAYER_1 = 500
 LABEL_CNT = 10
 
-x_init, y = cl.load_data()
+x_init, y = cl.load_data('cifar10/data_batch_1')
 
 y = y[:70]
 print(y)
@@ -51,6 +51,7 @@ def f_forward(x, w1, w2):
     # hidden
 
     z1 = x.dot(w1)# input of layer 1
+    z1 = z1 + np.random.randint(low = -10, high = 10, size=z1.shape)
     
     np.save("data/w", w1)
     np.save("data/x", x)

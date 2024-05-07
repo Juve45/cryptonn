@@ -13,7 +13,7 @@ IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
 IMG_SZ = IMG_HEIGHT * IMG_WIDTH 
-LAYER_1 = 20
+LAYER_1 = 1000
 LABEL_CNT = 10
 
 x_init, y = cl.load_data()
@@ -30,7 +30,7 @@ def grayscale(pixels):
     return np.array(ans)
 
 
-x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:20]]
+x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:2]]
 
 # print("x=", x[0].tolist())
 
@@ -100,9 +100,9 @@ def f_forward(x, w1, w2):
     # print(x)
     # printsys.err.
     print("first layer done, time: ", end - start, "s", file=sys.stderr)
-    # print("w=", w1.tolist())
-    # print("a=", z1.tolist())
-    # print("first layer done, time: ", end - start, "s", file=sys.stderr)
+    print("w=", w1.tolist())
+    print("a=", z1.tolist())
+    print("first layer done, time: ", end - start, "s", file=sys.stderr)
 
     a1 = sigmoid(z1)# out put of layer 2 
 
@@ -153,7 +153,7 @@ def first_layer_prep(x, w1):
 
     for i in range(w1.shape[1]):
         # t = threading.Thread(target=, args=[]) 
-        z.append(secure_inner_product(x, w1[ :, i].tolist()))
+        z.append(secure_inner_product(x, w1[ :, i].tolist()) / 100.)
 
     return np.array(z).reshape(1, LAYER_1)
 

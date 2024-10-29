@@ -16,7 +16,7 @@ LAYER_1 = 2000
 # OUTPUT_LAYER = 1
 LABEL_CNT = 10
 
-ENCRYPTION = False
+ENCRYPTION = True
 
 def grayscale(pixels):
 
@@ -44,6 +44,7 @@ def load_data(file, limit = None):
 	x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init]
 
 	if ENCRYPTION:
+		global feip
 		feip = fe.FEIP()
 		feip.setup(x[1].shape[1])
 		threads = []	

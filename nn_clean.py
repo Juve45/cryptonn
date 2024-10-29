@@ -13,7 +13,7 @@ IMG_COLOR = 3
 IMG_WIDTH = 32
 IMG_HEIGHT = 32
 IMG_SZ = IMG_HEIGHT * IMG_WIDTH 
-LAYER_1 = 500
+LAYER_1 = 700
 LABEL_CNT = 10
 
 x_init, y = cl.load_data('cifar10/data_batch_1')
@@ -30,7 +30,7 @@ def grayscale(pixels):
     return np.array(ans)
 
 
-x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:2]]
+x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:5]]
 
 # print("x=", x[0].tolist())
 
@@ -51,7 +51,7 @@ def f_forward(x, w1, w2):
     # hidden
 
     z1 = x.dot(w1)# input of layer 1
-    z1 = z1 + np.random.randint(low = -10, high = 10, size=z1.shape)
+    # z1 = z1 + np.random.randint(low = -10, high = 10, size=z1.shape)
     
     np.save("data/w", w1)
     np.save("data/x", x)

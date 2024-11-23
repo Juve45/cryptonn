@@ -16,7 +16,7 @@ LAYER_1 = 2000
 # OUTPUT_LAYER = 1
 LABEL_CNT = 10
 
-ENCRYPTION = True
+ENCRYPTION = False
 
 def grayscale(pixels):
 
@@ -315,7 +315,7 @@ parameters = generate_wt()
 
 # print(w1, "\n\n", w2)
 
-x, y, enc_x_feip = load_data('cifar10/data_batch_1', 500)
+x, y, enc_x_feip = load_data('cifar10/data_batch_1')
 print("aiiici", x[0].shape, y[0].shape)
 
 

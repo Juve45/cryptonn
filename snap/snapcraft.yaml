@@ -7,14 +7,17 @@ base: core22
 confinement: strict
 
 parts:
-  liquidctl:
-    plugin: python
-    source: .
-    stage-packages:
+  py:
+    plugin: python3
+    python-packages:
        - python3-usb
        - numpy
        - matplotlib
        - memory_profiler
+  securenn:
+    plugin: python
+    source: .
+    stage-packages:
 
 apps:
   liquidctl:

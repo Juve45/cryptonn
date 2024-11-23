@@ -1,0 +1,24 @@
+name: securenn
+summary: a secure client server training of NN
+description: |
+     a secure client server training of NN
+version: test
+base: core22
+confinement: strict
+
+parts:
+  liquidctl:
+    plugin: python
+    source: .
+    stage-packages:
+       - python3-usb
+       - numpy
+       - matplotlib
+       - memory_profiler
+
+apps:
+  liquidctl:
+    command: bin/liquidctl
+    plugs:
+      - raw-usb
+      - hardware-observe

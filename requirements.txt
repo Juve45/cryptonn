@@ -1,0 +1,3 @@
+numpy
+matplotlib
+memory_profiler

@@ -191,3 +191,8 @@ class FEIP:
 
 
 	
+class FHIP:
+
+
+	def encrypt():
+		

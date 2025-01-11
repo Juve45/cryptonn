@@ -68,7 +68,7 @@ def generate_wt():
 		
 # for loss we will be using mean square error(MSE)
 def loss(out, y):
-	m = y.shape[0]
+	m = y[0].shape[0]
 	loss = -(1/m) * np.sum(y*np.log(out) + (1-y)*np.log(1-out))
 	return loss
 	# s =(np.square(out-Y))
@@ -82,7 +82,7 @@ def loss(out, y):
 	 
 # Back propagation of error 
 def back_prop(x, y, parameters, cache):
-	m = y.shape[0]
+	m = y[0].shape[0]
 	
 	# retrieve the intermediate values
 	Z1 = cache["Z1"]
@@ -91,7 +91,7 @@ def back_prop(x, y, parameters, cache):
 	A2 = cache["A2"]
 
 	# compute the derivative of the loss with respect to A2
-	y = y.reshape(A2.shape)
+	y = y.T
 	# dA2 = A2 - y
 	dA2 = - (y/A2) + ((1-y)/(1-A2))
 	# print(dA2.shape, A2.shape, y.shape)
@@ -141,19 +141,22 @@ def update_parameters(parameters, gradients, learning_rate):
 
 def binary_cross_entropy_loss(A2, y):
 	# print(y)
-	m = y.shape[0]
-	# m = y[0].shape[0]
+	# m = y.shape[0]
+	m = y[0].shape[0]
 	# print(y)
 	# print(A2)
 	# print(np.argmax(y), np.argmax(A2))
+	A2T = A2.T
 	acc = 0
-	if np.argmax(y) == np.argmax(A2):
-		acc = 1
+	for i in range(len(y)):
+		if np.argmax(y[i]) == np.argmax(A2T[i]):
+			acc += 1
+
 
 	loss = -(1/m) * np.sum(np.dot(y, np.log(A2)) + np.dot((1-y),np.log(1-A2)))
 	return acc, loss
 
-def train(x, Y, parameters, alpha = 0.01, epoch = 10):
+def train(x, Y, parameters, alpha = 0.01, epoch = 10, batch = 50):
 	acc =[]
 	losss =[]
 
@@ -161,18 +164,18 @@ def train(x, Y, parameters, alpha = 0.01, epoch = 10):
 		l =[]
 		acc_1 = 0
 		loss_1 = 0
-		for i in range(len(x)):
-			image = x[i]
+		for i in range(0, len(x), batch):
+			image = np.concatenate(x[i:i+batch])
 			if ENCRYPTION:
 				image = enc_x_feip[i]
 			out, cache = f_forward(image, parameters)
-			loss = binary_cross_entropy_loss(out, Y[i])
+			loss = binary_cross_entropy_loss(out, np.array(Y[i:i+batch]))
 			# lo = loss(out, Y[i])
 			acc_1 += loss[0]
 			loss_1 += loss[1]
-			gradients = back_prop(x[i], y[i], parameters, cache)
+			gradients = back_prop(np.concatenate(x[i:i+batch]), np.array(y[i:i+batch]), parameters, cache)
 			parameters = update_parameters(parameters, gradients, alpha)
-			if i % 100 == 0:
+			if i % 10000 == 0:
 				print(f"iteration {i}: loss = {loss}")
 
 		print("epochs:", j + 1, "======== acc:", acc_1)  
@@ -236,14 +239,14 @@ mnist = MNISTReader.MnistDataloader("MNIST/train-images.idx3-ubyte", "MNIST/trai
 
 
 x, y, x_test, y_test = mnist.load_data_nn();
-x = x[:2000]
-y = y[:2000]
+x = x
+y = y
 x_test = x_test[:100]
 y_test = y_test[:100]
 print("aiiici", x[0].shape, y[0].shape)
 
 
-acc, losss, parameters = train(x, y, parameters, 0.005, 30)
+acc, losss, parameters = train(x, y, parameters, 0.005, 50, 250)
 # parameters = train(x, y, parameters, 0.08, 20)
 
 import matplotlib.pyplot as plt1

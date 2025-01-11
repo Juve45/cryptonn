@@ -1,2 +1,6 @@
 charm/
 venv/
+src/charm
+src/
+cifar10/
+MNIST/

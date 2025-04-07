@@ -15,7 +15,7 @@ def create_socket(offset = 0):
 	# global HOST, PORT
 	s = NumpySocket()
 	s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-	s.bind((settings.HOST, settings.PORT + offset))
+	s.bind(('0.0.0.0', settings.PORT + offset))
 	s.listen()
 	conn, address = s.accept()
 	return conn
@@ -205,7 +205,7 @@ def test(Y, parameters, batch = 1):
 		# lo = loss(out, Y[i])
 		acc_1 += loss[0]
 		loss_1 += loss[1]
-		print(i, losss, acc)
+		# print(i, losss, acc)
 
 		if i % 10000 == 0:
 			print(f"iteration {i}: loss = {loss}")
@@ -284,14 +284,14 @@ acc, losss, parameters = test(y_test, parameters)
 print(acc, loss)
  
 # plotting accuracy
-plt1.plot(acc)
-plt1.ylabel('Accuracy')
-plt1.xlabel("Epochs:")
-plt1.show()
+# plt1.plot(acc)
+# plt1.ylabel('Accuracy')
+# plt1.xlabel("Epochs:")
+# plt1.show()
  
-# plotting Loss
-plt1.plot(losss)
-plt1.ylabel('Loss')
-plt1.xlabel("Epochs:")
-plt1.show()
+# # plotting Loss
+# plt1.plot(losss)
+# plt1.ylabel('Loss')
+# plt1.xlabel("Epochs:")
+# plt1.show()
 

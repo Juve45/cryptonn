@@ -17,7 +17,7 @@ import settings
 def create_socket(offset = 0):
 	s = NumpySocket()
 	s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-	s.connect((settings.IP, settings.CLOUD_PORT + offset)) # Connect to the port and host
+	s.connect((settings.CLOUD_IP, settings.CLOUD_PORT + offset)) # Connect to the port and host
 	return s
 
 
@@ -210,7 +210,7 @@ y_test = y_test
 # print("aiiici", x[0].shape, y[0].shape)
 
 
-acc, losss, parameters = train(x, y, parameters, 0.005, 10, 250)
+acc, losss, parameters = train(x, y, parameters, 0.005, 2, 10)
 # parameters = train(x, y, parameters, 0.08, 20)
 
 import matplotlib.pyplot as plt1

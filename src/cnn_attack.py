@@ -187,7 +187,7 @@ y = y[:1480]
 
 import scipy.optimize
 
-# x = scipy.linalg.solve(A, y)
+# x = scipy.linalg.solve(A, y) #gaussian elimination
 # print(x)
 
 import attack

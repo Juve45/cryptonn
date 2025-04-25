@@ -4,9 +4,11 @@ data = [61, 44, 48, 56, 78, 96, 112, 117, 123, 125, 108, 104, 120, 118, 111, 103
 
 def show_image(data, savefile=None):
 	data = np.array(data).reshape([32, 32]).astype(np.int32)
+	
 	import matplotlib
 	matplotlib.use('Qt5Agg')
 	from matplotlib import pyplot as plt
+
 	plt.imshow(data, interpolation='nearest')
 	if savefile == None:
 		plt.show()
@@ -19,7 +21,7 @@ def show_image(data, savefile=None):
 
 
 def show_image_color(data, savefile=None):
-	data = np.array(data).reshape([3, 32, 32]).astype(np.int32).transpose(1, 2, 0)
+	data = np.array(data).reshape([3, 32, 32]).transpose(1, 2, 0)
 	import matplotlib
 	matplotlib.use('Qt5Agg')
 	from matplotlib import pyplot as plt

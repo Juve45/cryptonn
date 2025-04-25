@@ -81,7 +81,14 @@ import datetime
 mse_res = [[], [], [], []]
 t_res = [[], [], [], []]
 
+sum_mse = dict()
+sum_t = dict()
+
 def load_nn_train(count, layer1):
+	global mse_res
+	global t_res
+	mse_res = [[] for i in range(count)]
+	t_res = [[] for i in range(count)]
 
 	x_init, y = cl.load_data('../cifar10/data_batch_1')
 	x = [grayscale(i).reshape(1, IMG_SZ) for i in x_init[:count]]
@@ -93,6 +100,7 @@ def load_nn_train(count, layer1):
 	w1 = generate_wt(IMG_SZ, layer1)
 	# imgview.show_image(x[0])
 	for i in range(len(x)):
+
 		print(i, x[i].shape)
 		z1 = x[i].dot(w1)# input of layer 1
 		# z1 = z1 + np.random.randint(low = -10, high = 10, size=z1.shape)
@@ -102,21 +110,27 @@ def load_nn_train(count, layer1):
 		np.save("../data/a", z1)
 
 
-		for ineq_period in [2, 4, 9, 16, 1000]:
-		# for ineq_period in [9, 10]:
+		# for ineq_period in [1000, 16, 9]:
+		for ineq_period in [1000, 16, 9, 4, 2]:
+		# for ineq_period in [4, 16]:
 			a = datetime.datetime.now()
 			mse = linprog_attack(ineq_period, 
 				"../results2/img%i_%i_%i" % (i, layer1, ineq_period))
 			b = datetime.datetime.now()
 			t = (b-a).microseconds/1000
-			mse_res[i].append(mse);
-			t_res[i].append(t);
+			mse_res[i].append((round(1/ineq_period, 2), round(mse, 4)));
+			t_res[i].append((round(1/ineq_period, 2), int(t)));
+
+			if i > 0:
+				sum_mse[layer1*100 + ineq_period] += mse/count
+				sum_t[layer1*100 + ineq_period] += t/count
+			else:
+				sum_mse[layer1*100 + ineq_period] = mse/count
+				sum_t[layer1*100 + ineq_period] = t/count
 			print("img%i_%i_%i" % (i, layer1, ineq_period), mse, t, "ms")
 
-		# exit(0)
-		xx = np.load("../data/x.npy")[0]
-		imgview.show_image(xx, "../results2/img%i_original"%(i))
-		# imgview.show_image(xx)
+		# xx = np.load("../data/x.npy")[0]
+		# imgview.show_image(xx, "../results2/img%i_original"%(i))
 
 
 def linprog_attack(period, name):
@@ -124,6 +138,8 @@ def linprog_attack(period, name):
 	a = np.load("../data/a.npy")
 	x = np.load("../data/x.npy")[0]
 	# imgview.show_image(x, "")
+
+	a = np.round(a, 3)
 
 	a = a.tolist()[0]
 	c = [0] * len(x)
@@ -134,7 +150,7 @@ def linprog_attack(period, name):
 	w = w.transpose().tolist()
 	ineq = []
 	aineq = []
-	augment(ineq, aineq, len(x), 3., period)	
+	augment(ineq, aineq, len(x), 25., period)	
 
 	import scipy.optimize
 
@@ -145,18 +161,24 @@ def linprog_attack(period, name):
 
 	mse = ((x/255 - report['x']/255)**2).mean()
 	print("MSE ", name, mse)
-	imgview.show_image(report['x'], name)
+	# imgview.show_image(report['x'], name)
 	return mse
 
 
-print(mse_res)
-print(t_res)
 
-load_nn_train(4, 350)
-load_nn_train(4, 500)
-# load_nn_train(4, 750)
-# load_nn_train(4, 1000)
+# load_nn_train(100, 350)
+# load_nn_train(100, 500)
+load_nn_train(100, 900)
+# load_nn_train(100, 1000)
 
+
+for i in mse_res:
+	print(*i)
+for i in t_res:
+	print(*i)
+
+print("SUM MSE", sum_mse)
+print("SUM T", sum_t)
 
 
 exit(0)

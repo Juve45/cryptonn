@@ -1,5 +1,5 @@
 import numpy as np
-import cifar_loader as cl
+from utils import cifar_loader as cl
 
 # padding for the matrix of images
 def zero_pad(X, pad):
@@ -149,7 +149,7 @@ def conv2d(input_image, filters, stride=1, padding=0):
     return output, np.array(A), np.array(y)
 
 
-x_init, y = cl.load_data('cifar10/data_batch_1')
+x_init, y = cl.load_data('../cifar10/data_batch_1')
 x = np.array([grayscale(i).reshape(32, 32) for i in x_init[:5]])
 
 
@@ -190,8 +190,8 @@ import scipy.optimize
 # x = scipy.linalg.solve(A, y) #gaussian elimination
 # print(x)
 
-import attack
-attack.show_image(x[1])
+from utils import imgview
+imgview.show_image(x[1])
 
 # x = scipy.optimize.linprog(c, A_ub = ineq, b_ub = aineq, A_eq = w, b_eq = a, bounds=[0, 255], method = "interior-point")
 x = scipy.optimize.linprog(c, A_eq = A, b_eq = y, bounds=[0, 255] , method = "interior-point", options={'cholesky':True})
@@ -201,7 +201,7 @@ x = scipy.optimize.linprog(c, A_eq = A, b_eq = y, bounds=[0, 255] , method = "in
 print(x)
 
 
-attack.show_image(x['x'])
+imgview.show_image(x['x'])
 
 
 
